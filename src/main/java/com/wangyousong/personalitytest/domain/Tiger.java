@@ -2,7 +2,7 @@ package com.wangyousong.personalitytest.domain;
 
 import java.util.List;
 
-public class Tiger implements TotalScore {
+public class Tiger implements TotalScore, Feature {
     private final List<ScoreOption> options;
 
     public Tiger(List<ScoreOption> options) {
@@ -15,7 +15,7 @@ public class Tiger implements TotalScore {
     }
 
     @Override
-    public String result() {
+    public String describe() {
         return "You are a " + this.getClass().getSimpleName() + " , as you got " + total() + " score !";
     }
 }

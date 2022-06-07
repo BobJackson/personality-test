@@ -2,7 +2,7 @@ package com.wangyousong.personalitytest.domain;
 
 import java.util.List;
 
-public class Owl implements TotalScore {
+public class Owl implements TotalScore, Feature {
 
     private final List<ScoreOption> options;
 
@@ -16,7 +16,7 @@ public class Owl implements TotalScore {
     }
 
     @Override
-    public String result() {
+    public String describe() {
         return "You are an " + this.getClass().getSimpleName() + " , as you got " + total() + " score !";
     }
 }

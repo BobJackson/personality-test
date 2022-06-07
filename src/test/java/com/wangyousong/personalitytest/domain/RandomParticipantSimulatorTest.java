@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,11 +13,15 @@ class RandomParticipantSimulatorTest {
 
     @Test
     void should_simulate_result() {
-        TotalScore totalScore = RandomParticipantSimulator.simulate();
+        String result = RandomParticipantSimulator.simulate();
+        log.debug("result = {}", result);
+        assertThat(result).isNotEmpty();
+    }
 
-        log.debug("result = {}", totalScore.result());
+    @Test
+    void should_get_limit_number() {
+        int sum = IntStream.rangeClosed(1, 5).limit(3).sum();
 
-        assertThat(totalScore.total()).isGreaterThanOrEqualTo(6);
-        assertThat(totalScore.total()).isLessThanOrEqualTo(30);
+        assertThat(sum).isEqualTo(6);
     }
 }

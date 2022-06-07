@@ -1,5 +1,5 @@
 package com.wangyousong.personalitytest.domain;
 
-public interface TotalScore {
-    int total();
+public interface Feature {
+    String describe();
 }

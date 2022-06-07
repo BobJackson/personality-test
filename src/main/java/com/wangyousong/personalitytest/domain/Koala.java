@@ -2,7 +2,7 @@ package com.wangyousong.personalitytest.domain;
 
 import java.util.List;
 
-public class Koala implements TotalScore {
+public class Koala implements TotalScore, Feature {
 
     private final List<ScoreOption> options;
 
@@ -16,7 +16,7 @@ public class Koala implements TotalScore {
     }
 
     @Override
-    public String result() {
+    public String describe() {
         return "You are a " + this.getClass().getSimpleName() + " , as you got " + total() + " score !";
     }
 }
