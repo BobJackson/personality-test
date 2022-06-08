@@ -5,9 +5,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.SecureRandom;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -27,12 +26,13 @@ public class RandomParticipantSimulator {
     }
 
     public static String simulate() {
-        Tiger tiger = mkTigerOption();
-        Peacock peacock = mkPeacockOption();
-        Owl owl = mkOwlOption();
-        Koala koala = mkKoalaOption();
-        Chameleon chameleon = mkChameleonOption();
-        List<? extends TotalScore> totalScores = calculate(tiger, peacock, owl, koala, chameleon);
+        List<? extends TotalScore> totalScores = calculate(
+                mkTigerOption(),
+                mkPeacockOption(),
+                mkOwlOption(),
+                mkKoalaOption(),
+                mkChameleonOption()
+        );
         return new PersonalityTestResult(totalScores).result();
     }
 
@@ -74,32 +74,43 @@ public class RandomParticipantSimulator {
         }
 
         // case 3: 3个分值相等，包含变色龙,就是变色龙；不包含变色龙，就是这三项最高分的组合
-        List<? extends TotalScore> sortedAnimals = Stream.of(tiger, peacock, owl, koala, chameleon)
-                .sorted(comparing(TotalScore::total))
-                .toList();
+        List<? extends TotalScore> totalScores = List.of(tiger, peacock, owl, koala, chameleon);
+        Map<Integer, Integer> totalScoreContainer = createTotalScoreContainer(totalScores);
         if (count == 3) {
-            boolean hasChameleon = sortedAnimals.stream()
-                    .limit(3)
-                    .anyMatch(it -> it.getClass().isInstance(Chameleon.class));
-            if (hasChameleon) {
-                return List.of(chameleon);
-            }
-            return sortedAnimals.stream().limit(3).toList();
+            return findSameNTotalScores(chameleon, totalScores, totalScoreContainer, t -> t != 3);
         }
-
         // case 4: 2个分值相等，包含变色龙，就是变色龙；不包含变色龙，就是这两项最高分的组合
         if (count == 2) {
-            boolean hasChameleon = sortedAnimals.stream()
-                    .limit(2)
-                    .anyMatch(it -> it.getClass().isInstance(Chameleon.class));
-            if (hasChameleon) {
-                return List.of(chameleon);
-            }
-            return sortedAnimals.stream().limit(2).toList();
+            return findSameNTotalScores(chameleon, totalScores, totalScoreContainer, t -> t != 2);
         }
 
         // case 5: 5个分值均相等（count == 1），则是变色龙
         return List.of(chameleon);
+    }
+
+    private static List<? extends TotalScore> findSameNTotalScores(Chameleon chameleon,
+                                                                   List<? extends TotalScore> totalScores,
+                                                                   Map<Integer, Integer> totalScoreContainer,
+                                                                   Predicate<Integer> notCount) {
+        // 找到分值相同的N个选项，判断其中是否包含变色龙
+        List<Integer> excludedTotalScores = totalScoreContainer.values().stream().filter(notCount).toList();
+        List<? extends TotalScore> reservedTotalScores = totalScores.stream()
+                .filter(t -> !excludedTotalScores.contains(t.total())).toList();
+        boolean hasChameleon = reservedTotalScores.stream()
+                .anyMatch(it -> it.getClass().isInstance(Chameleon.class));
+        if (hasChameleon) {
+            return List.of(chameleon);
+        }
+        return reservedTotalScores;
+    }
+
+    private static Map<Integer, Integer> createTotalScoreContainer(List<? extends TotalScore> totalScores) {
+        Map<Integer, Integer> totalScoreContainer = new HashMap<>();
+        for (TotalScore ts : totalScores) {
+            Integer frequency = totalScoreContainer.get(ts.total());
+            totalScoreContainer.put(ts.total(), Objects.isNull(frequency) ? 1 : frequency + 1);
+        }
+        return totalScoreContainer;
     }
 
     private static Tiger mkTigerOption() {
