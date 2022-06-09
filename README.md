@@ -1,26 +1,39 @@
 # 性格测试
 
-## 当前算法已知bug:
-* 当distinct score count = 3 or 2,计算不正确，for example:
+## 取最高分(分值从高到低排列)
+* 依次是A B C D E, 只取第一项A；
+* 依次是A A B C D, 前两项为待选项，如果包含变色龙，就是变色龙，否则就是前两项组合；
+* 依次是A A A B C, 前三项为待选项，如果包含变色龙，就是变色龙，否则就是前三项组合；
+* 依次是A A A A B, 四项相同，就是变色龙；
+* 依次是A A A A A, 五项相同，就是变色龙；
 
-应该是Chameleon
+## 测试数据
+看下面的测试数据来说，
 ````
- - Tiger got 21
- - Peacock got 20
- - Owl got 20
- - Koala got 18
- - Chameleon got 20
- - distinct score count = 3
- - result = Koala,Peacock,Owl
+Tiger got 21
+Owl got 19
+Koala got 19
+Peacock got 18
+Chameleon got 14
+result = Tiger
 ````
 
-新的测试数据，应该是Tigar
 ````
- - Tiger got 25
- - Peacock got 16
- - Owl got 15
- - Koala got 15
- - Chameleon got 16
- - distinct score count = 3
- - result = Chameleon
+Peacock got 19
+Koala got 19
+Chameleon got 19
+Tiger got 15
+Owl got 15
+result = Chameleon
+````
+
+
+下面是有问题的数据
+````
+Tiger got 21
+Owl got 21
+Chameleon got 21
+Koala got 18
+Peacock got 16
+result = Tiger,Owl
 ````

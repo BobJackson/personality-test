@@ -3,7 +3,6 @@ package com.wangyousong.personalitytest.domain;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,9 +12,12 @@ class RandomParticipantSimulatorTest {
 
     @Test
     void should_simulate_result() {
-        String result = RandomParticipantSimulator.simulate();
-        log.debug("result = {}", result);
-        assertThat(result).isNotEmpty();
+        for (int i = 0; i < 100; i++) {
+            log.debug("---------开始模拟--------");
+            String result = RandomParticipantSimulator.simulate();
+            log.debug("result = {}", result);
+            assertThat(result).isNotEmpty();
+        }
     }
 
     @Test
